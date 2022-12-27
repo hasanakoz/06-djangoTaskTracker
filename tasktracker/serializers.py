@@ -1,16 +1,16 @@
 from rest_framework import serializers
 from .models import Tasktracker
 
-class TaskSerializer(serializers.Serializer):
 
+class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tasktracker
-        fields = {
+        fields = (
             'id',
             'task',
             'description',
             'priority',
             'is_done',
             'created_date',
-        }
+        )

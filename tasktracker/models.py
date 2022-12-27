@@ -4,11 +4,11 @@ from django.db import models
 # Create your models here.
 
 class Tasktracker(models.Model):
-    PRIORITY = {
+    PRIORITY = (
         (1, 'High'),
         (2, 'Medium'),
         (3, 'Low')
-    }
+    )
     task = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     priority = models.SmallIntegerField(choices=PRIORITY, default=3)

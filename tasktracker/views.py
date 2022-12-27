@@ -1,24 +1,26 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+
 
 from .models import Tasktracker
-from .serializer import TaskSerializer
+from .serializers import TaskSerializer
+
 # Create your views here.
 
 
 @api_view(['GET', 'POST'])
-
 def task_list_create(request):
     if request.method == 'GET':
-        tasks = Tasktracker.objects.filter(is_done = False)
+        tasks = Tasktracker.objects.filter(is_done=False)
         serializer = TaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
-    if request.method == 'POST':
-        serializer = TaskSerializer(data = request.data)
+    elif request.method == 'POST':
+        serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -28,8 +30,7 @@ def task_list_create(request):
 
 @api_view(['GET', 'DELETE', 'PUT'])
 def task_detail(request, id):
-    task = get_object_or_404(task, id=id)
-
+    task = get_object_or_404(Tasktracker, id=id)
 
     if request.method == 'GET':
         serializer = TaskSerializer(task)
@@ -44,7 +45,14 @@ def task_detail(request, id):
 
     elif request.method == 'DELETE':
         task.delete()
-        return Response({'message' : 'task deleted successfully'})    
-            
+        return Response({'message': 'task deleted successfully'})
 
-            
+
+class Tasks(ListCreateAPIView):
+    queryset = Tasktracker.objects.filter(is_done=False)
+    serializer_class = TaskSerializer
+
+
+class TaskDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Tasktracker.objects.filter(is_done=False)
+    serializer_class = TaskSerializer
